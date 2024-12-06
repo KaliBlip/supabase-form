@@ -73,7 +73,7 @@
       </div>
       
       <div class="field">
-        <label class="label" for="image">Cover Image</label>
+        <label class="label" for="image">Optional Image</label>
         <div class="control">
           <input
             class="input"
@@ -97,7 +97,7 @@
           />
         </div>
       </div>
-      
+
       <div class="field">
         <label class="label" for="preview2">Preview Image 2</label>
         <div class="control">
@@ -110,7 +110,7 @@
           />
         </div>
       </div>
-      
+
       <div class="field">
         <label class="label" for="preview3">Preview Image 3</label>
         <div class="control">
@@ -123,7 +123,6 @@
           />
         </div>
       </div>
-      
 
       <div class="field is-grouped">
         <div class="control">
@@ -155,7 +154,7 @@
       try {
         supabaseClient = supabase.createClient(
           "https://btwzvtdbmaxtdpmrhgps.supabase.co", 
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0d3p2dGRibWF4dGRwbXJoZ3BzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIyNDcwODgsImV4cCI6MjA0NzgyMzA4OH0.cU8b-Df0xDZtkCsAmqreHBFBF-esIC72u4Hgs2-X0u4"
+          "YOUR_SUPABASE_API_KEY"
         );
         debugLog('Supabase client initialized successfully');
         return true;
@@ -163,6 +162,36 @@
         debugLog(`Supabase initialization error: ${error.message}`);
         return false;
       }
+    }
+
+    // Upload image and return public URL
+    async function uploadImage(imageInput, fieldName) {
+      if (imageInput.files.length > 0) {
+        const imageFile = imageInput.files[0];
+        debugLog(`Image selected for ${fieldName}: ${imageFile.name}`);
+
+        // Upload image to Supabase storage
+        const { data, error: uploadError } = await supabaseClient.storage
+          .from('images')  // 'images' is your storage bucket
+          .upload(`public/${Date.now()}_${imageFile.name}`, imageFile);
+
+        if (uploadError) {
+          debugLog(`Image upload error for ${fieldName}: ${JSON.stringify(uploadError)}`);
+          throw uploadError;
+        }
+
+        // Get the public URL of the uploaded image
+        const imageUrl = supabaseClient.storage
+          .from('images')
+          .getPublicUrl(data.path).data.publicUrl;
+
+        // Log the public URL for debugging
+        debugLog(`Image uploaded for ${fieldName}: ${imageUrl}`);
+
+        return imageUrl;
+      }
+
+      return null;  // Return null if no file is selected
     }
 
     // Wait for the DOM to be fully loaded
@@ -195,42 +224,24 @@
         const formData = new FormData(form);
         const submission = {};
 
-        // Convert FormData to object
+        // Convert FormData to object, excluding image fields for now
         for (let [key, value] of formData.entries()) {
-          if (key !== 'image') {
+          if (key !== 'image' && key !== 'preview1' && key !== 'preview2' && key !== 'preview3') {
             submission[key] = value;
             debugLog(`Collected field: ${key} = ${value}`);
           }
         }
 
         try {
-          // Check if an image is selected
-          const imageInput = form.querySelector('input[name="image"]');
-          if (imageInput.files.length > 0) {
-            const imageFile = imageInput.files[0];
-            debugLog(`Image selected: ${imageFile.name}`);
+          // Upload images for preview1, preview2, preview3
+          const preview1Url = await uploadImage(form.querySelector('input[name="preview1"]'), 'preview1');
+          if (preview1Url) submission.preview1 = preview1Url;
 
-            // Upload image to Supabase storage
-            const { data, error: uploadError } = await supabaseClient.storage
-              .from('images')
-              .upload(`public/${Date.now()}_${imageFile.name}`, imageFile);
+          const preview2Url = await uploadImage(form.querySelector('input[name="preview2"]'), 'preview2');
+          if (preview2Url) submission.preview2 = preview2Url;
 
-            if (uploadError) {
-              debugLog(`Image upload error: ${JSON.stringify(uploadError)}`);
-              throw uploadError;
-            }
-
-            // Get public URL of the uploaded image
-            const imageUrl = supabaseClient.storage
-              .from('images')
-              .getPublicUrl(data.path).data.publicUrl;
-
-            submission.image_url = imageUrl;
-            debugLog(`Image uploaded: ${imageUrl}`);
-          }
-
-          // Debug: Log submission object
-          debugLog(`Full submission object: ${JSON.stringify(submission)}`);
+          const preview3Url = await uploadImage(form.querySelector('input[name="preview3"]'), 'preview3');
+          if (preview3Url) submission.preview3 = preview3Url;
 
           // Insert data into Supabase
           const { data, error } = await supabaseClient

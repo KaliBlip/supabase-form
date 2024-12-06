@@ -17,39 +17,25 @@
       <div class="field">
         <label class="label" for="name">Name</label>
         <div class="control">
-          <input
-            required
-            class="input"
-            type="text"
-            id="name"   
-            placeholder="Your name"
-            name="name"
-          />
+          <input required class="input" type="text" id="name" placeholder="Your name" name="name" />
         </div>
       </div>
-      
+
       <div class="field">
         <label class="label" for="email">Email</label>
         <div class="control has-icons-left">
-          <input
-            class="input"
-            type="email"
-            required
-            id="email"  
-            placeholder="Email input"
-            name="email"
-          />
+          <input class="input" type="email" required id="email" placeholder="Email input" name="email" />
           <span class="icon is-small is-left">
             <i class="fas fa-envelope"></i>
           </span>
         </div>
       </div>
-      
+
       <div class="field">
         <label class="label" for="subject">Subject</label>
         <div class="control">
           <div class="select">
-            <select id="subject" name="subject" required>   
+            <select id="subject" name="subject" required>
               <option value="">Select a subject</option>
               <option value="quote">Quote</option>
               <option value="project">Project</option>
@@ -58,72 +44,21 @@
           </div>
         </div>
       </div>
-      
+
       <div class="field">
         <label class="label" for="message">Message</label>
         <div class="control">
-          <textarea
-            required
-            class="textarea"
-            id="message"  
-            placeholder="Your message"
-            name="message"
-          ></textarea>
-        </div>
-      </div>
-      
-      <div class="field">
-        <label class="label" for="image">Cover Image</label>
-        <div class="control">
-          <input
-            class="input"
-            type="file"
-            id="image"
-            name="image"
-            accept="image/*"
-          />
+          <textarea required class="textarea" id="message" placeholder="Your message" name="message"></textarea>
         </div>
       </div>
 
       <div class="field">
-        <label class="label" for="preview1">Preview Image 1</label>
+        <label class="label" for="image">Cover Image</label>
         <div class="control">
-          <input
-            class="input"
-            type="file"
-            id="preview1"
-            name="preview1"
-            accept="image/*"
-          />
+          <input class="input" type="file" id="image" name="image" accept="image/*" />
         </div>
       </div>
-      
-      <div class="field">
-        <label class="label" for="preview2">Preview Image 2</label>
-        <div class="control">
-          <input
-            class="input"
-            type="file"
-            id="preview2"
-            name="preview2"
-            accept="image/*"
-          />
-        </div>
-      </div>
-      
-      <div class="field">
-        <label class="label" for="preview3">Preview Image 3</label>
-        <div class="control">
-          <input
-            class="input"
-            type="file"
-            id="preview3"
-            name="preview3"
-            accept="image/*"
-          />
-        </div>
-      </div>
-      
+
 
       <div class="field is-grouped">
         <div class="control">
@@ -131,7 +66,7 @@
         </div>
       </div>
     </form>
-    
+
     <!-- Debug Output -->
     <div id="debug-output" class="mt-4"></div>
   </section>
@@ -154,7 +89,7 @@
     function initSupabase() {
       try {
         supabaseClient = supabase.createClient(
-          "https://btwzvtdbmaxtdpmrhgps.supabase.co", 
+          "https://btwzvtdbmaxtdpmrhgps.supabase.co",
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0d3p2dGRibWF4dGRwbXJoZ3BzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIyNDcwODgsImV4cCI6MjA0NzgyMzA4OH0.cU8b-Df0xDZtkCsAmqreHBFBF-esIC72u4Hgs2-X0u4"
         );
         debugLog('Supabase client initialized successfully');
@@ -174,7 +109,7 @@
       }
 
       const form = document.getElementById('contact-form');
-      
+
       if (!form) {
         debugLog('Form not found');
         return;
@@ -247,7 +182,7 @@
 
           debugLog('Submission successful');
           alert('Thanks for contacting us!');
-          
+
           // Reset form
           form.reset();
 
@@ -260,4 +195,5 @@
     });
   </script>
 </body>
+
 </html>

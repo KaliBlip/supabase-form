@@ -176,6 +176,7 @@
               .upload(`public/${Date.now()}_${imageFile.name}`, imageFile);
 
             if (uploadError) {
+              debugLog(`Image upload error: ${JSON.stringify(uploadError)}`);
               throw uploadError;
             }
 
@@ -188,10 +189,17 @@
             debugLog(`Image uploaded: ${imageUrl}`);
           }
 
+          // Debug: Log submission object
+          debugLog(`Full submission object: ${JSON.stringify(submission)}`);
+
           // Insert data into Supabase
           const { data, error } = await supabaseClient
             .from('entries')
             .insert([submission]);
+
+          // Debug: Log response details
+          debugLog(`Insert response data: ${JSON.stringify(data)}`);
+          debugLog(`Insert response error: ${JSON.stringify(error)}`);
 
           if (error) {
             throw error;
@@ -204,7 +212,7 @@
           form.reset();
 
         } catch (error) {
-          debugLog(`Error: ${error.message}`);
+          debugLog(`Full error details: ${JSON.stringify(error)}`);
           console.error('Submission error:', error);
           alert(`Error: ${error.message}`);
         }

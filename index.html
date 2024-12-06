@@ -73,7 +73,7 @@
       </div>
       
       <div class="field">
-        <label class="label" for="image">Optional Image</label>
+        <label class="label" for="image">Cover Image</label>
         <div class="control">
           <input
             class="input"
@@ -84,6 +84,46 @@
           />
         </div>
       </div>
+
+      <div class="field">
+        <label class="label" for="preview1">Preview Image 1</label>
+        <div class="control">
+          <input
+            class="input"
+            type="file"
+            id="preview1"
+            name="preview1"
+            accept="image/*"
+          />
+        </div>
+      </div>
+      
+      <div class="field">
+        <label class="label" for="preview2">Preview Image 2</label>
+        <div class="control">
+          <input
+            class="input"
+            type="file"
+            id="preview2"
+            name="preview2"
+            accept="image/*"
+          />
+        </div>
+      </div>
+      
+      <div class="field">
+        <label class="label" for="preview3">Preview Image 3</label>
+        <div class="control">
+          <input
+            class="input"
+            type="file"
+            id="preview3"
+            name="preview3"
+            accept="image/*"
+          />
+        </div>
+      </div>
+      
 
       <div class="field is-grouped">
         <div class="control">
@@ -176,6 +216,7 @@
               .upload(`public/${Date.now()}_${imageFile.name}`, imageFile);
 
             if (uploadError) {
+              debugLog(`Image upload error: ${JSON.stringify(uploadError)}`);
               throw uploadError;
             }
 
@@ -188,10 +229,17 @@
             debugLog(`Image uploaded: ${imageUrl}`);
           }
 
+          // Debug: Log submission object
+          debugLog(`Full submission object: ${JSON.stringify(submission)}`);
+
           // Insert data into Supabase
           const { data, error } = await supabaseClient
             .from('entries')
             .insert([submission]);
+
+          // Debug: Log response details
+          debugLog(`Insert response data: ${JSON.stringify(data)}`);
+          debugLog(`Insert response error: ${JSON.stringify(error)}`);
 
           if (error) {
             throw error;
@@ -204,7 +252,7 @@
           form.reset();
 
         } catch (error) {
-          debugLog(`Error: ${error.message}`);
+          debugLog(`Full error details: ${JSON.stringify(error)}`);
           console.error('Submission error:', error);
           alert(`Error: ${error.message}`);
         }
